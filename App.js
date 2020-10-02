@@ -11,12 +11,25 @@ Expo의 Geolocation: https://docs.expo.io/versions/v39.0.0/sdk/location/#locatio
 
 */
 import * as Location from 'expo-location'
+import { Alert } from 'react-native'
 
 export default class App extends React.Component {
   //현재 위치정보를 받아와보자.
+  state = {
+    isLoading: true,
+  }
   getLocation = async () => {
-    let location = await Location.getCurrentPositionAsync()
-    console.log('location is ', location)
+    try {
+      const permission = await Location.requestPermissionsAsync() //https://docs.expo.io/versions/v39.0.0/sdk/location/#locationrequestpermissionsasync
+      console.log('here is permission: ', permission)
+      let {
+        coords: { latitude, longitude },
+      } = await Location.getCurrentPositionAsync()
+      //Send to API and get weather
+      this.setState({ isLoading: false }) //이렇게 setState를 했을 때ㅔ, 41번째 줄에서 null로 되어서 화면에 백지만 나온다. 즉 잘 작동함!
+    } catch (error) {
+      Alert.alert("can't find your location")
+    }
   }
 
   componentDidMount() {
@@ -24,6 +37,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    return <Loader />
+    const { isLoading } = this.state
+    return isLoading ? <Loader /> : null
   }
 }
