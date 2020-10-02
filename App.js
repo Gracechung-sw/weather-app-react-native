@@ -3,20 +3,31 @@ import React from 'react'
 import Loader from './components/Loader'
 
 /*
-React Native의 Geolocation: https://reactnative.dev/docs/geolocation#getcurrentposition
-Expo의 Geolocation: https://docs.expo.io/versions/v39.0.0/sdk/location/#locationinstallwebgeolocationpolyfill
-이렇게 많은 지원하는 API 중 필요한 것을 npm install 하듯이 설치한다. 
-설치: expo install expo-location https://docs.expo.io/versions/v39.0.0/sdk/location/#installation
-사용법: https://docs.expo.io/versions/v39.0.0/sdk/location/#usage
+weather API 사용
+1. 로그인 후 https://home.openweathermap.org/api_keys 에서 내 api_keys를 받아온다. 
+2. https://openweathermap.org/current 여기서 우리가 사용할 API 문서를 본다. 우리가 사용할 것은 https://openweathermap.org/current#geo
+3. Examples of API calls: http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid={API key} 
+4. 데이터를 받아온는 fetchAPI를 위해 axios를 설치 및 사용할 것이다. 
+
 
 */
 import * as Location from 'expo-location'
 import { Alert } from 'react-native'
+import axios from 'axios'
+
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY
 
 export default class App extends React.Component {
   //현재 위치정보를 받아와보자.
   state = {
     isLoading: true,
+  }
+
+  getWeather = async (latitude, longitude) => {
+    const { data } = await axios.get(
+      `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`,
+    )
+    console.log('getWeather data', data)
   }
   getLocation = async () => {
     try {
@@ -26,7 +37,8 @@ export default class App extends React.Component {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync()
       //Send to API and get weather
-      this.setState({ isLoading: false }) //이렇게 setState를 했을 때ㅔ, 41번째 줄에서 null로 되어서 화면에 백지만 나온다. 즉 잘 작동함!
+      this.getWeather(latitude, longitude)
+      this.setState({ isLoading: false }) //이렇게 setState를 했을 때, 41번째 줄에서 null로 되어서 화면에 백지만 나온다. 즉 잘 작동함!
     } catch (error) {
       Alert.alert("can't find your location")
     }
