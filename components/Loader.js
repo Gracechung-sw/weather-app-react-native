@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 
 export default function Loader() {
   return (
@@ -8,7 +8,8 @@ export default function Loader() {
       <Image
         style={styles.tinyLogo}
         source={{
-          uri: 'https://reactnative.dev/img/tiny_logo.png',
+          uri:
+            'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FclfoiG%2FbtqGbpLKhJc%2FupU52EiBlYUo2pj8LAV8c1%2Fimg.png',
         }}
       />
       <Text style={styles.text}>Weather App</Text>
@@ -28,4 +29,5 @@ const styles = StyleSheet.create({
     color: '#212121',
     fontSize: 30,
   },
+  tinyLogo: {},
 })
