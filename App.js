@@ -1,33 +1,31 @@
-import { StatusBar } from 'expo-status-bar'
+// /*
+// weather API 사용
+// 1. 로그인 후 https://home.openweathermap.org/api_keys 에서 내 api_keys를 받아온다.
+// 2. https://openweathermap.org/current 여기서 우리가 사용할 API 문서를 본다. 우리가 사용할 것은 https://openweathermap.org/current#geo
+// 3. Examples of API calls: http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid={API key}
+// 4. 데이터를 받아온는 fetchAPI를 위해 axios를 설치 및 사용할 것이다.
+
+// */
+
 import React from 'react'
-import Loader from './components/Loader'
-
-/*
-weather API 사용
-1. 로그인 후 https://home.openweathermap.org/api_keys 에서 내 api_keys를 받아온다. 
-2. https://openweathermap.org/current 여기서 우리가 사용할 API 문서를 본다. 우리가 사용할 것은 https://openweathermap.org/current#geo
-3. Examples of API calls: http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid={API key} 
-4. 데이터를 받아온는 fetchAPI를 위해 axios를 설치 및 사용할 것이다. 
-
-
-*/
-import * as Location from 'expo-location'
 import { Alert } from 'react-native'
+import * as Location from 'expo-location'
 import axios from 'axios'
+import Loader from './components/Loader'
+import Weather from './components/Weather'
 
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY
 
-export default class App extends React.Component {
-  //현재 위치정보를 받아와보자.
+export default class extends React.Component {
   state = {
     isLoading: true,
   }
-
   getWeather = async (latitude, longitude) => {
     const { data } = await axios.get(
-      `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`,
+      `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=metric`,
     )
     console.log('getWeather data', data)
+    this.setState({ isLoading: false, temp: data.main.temp })
   }
   getLocation = async () => {
     try {
@@ -49,7 +47,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { isLoading } = this.state
-    return isLoading ? <Loader /> : null
+    const { isLoading, temp } = this.state
+    return isLoading ? <Loader /> : <Weather temp={Math.round(temp)} />
   }
 }
